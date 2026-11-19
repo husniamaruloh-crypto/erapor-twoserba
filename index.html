@@ -219,10 +219,10 @@
     // TEMPEL URL WEB APP GOOGLE APPS SCRIPT (/exec) ANDA DI BAWAH INI:
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqmrJR290B2902IM2AuaCbmDwup2eI_xDCNgVcIQonHu7CjCYeF5K2YO5MoxiFhQ7k/exec";
 
-    const LOCAL_CACHE_KEY = "erapor_smpn2_sheet_cache_v2";
+    const LOCAL_CACHE_KEY = "erapor_smpn2_sheet_cache_v3";
 
     const defaultState = {
-      url: "https://sympathy-vacuum-silver-career.trycloudflare.com",
+      url: "https://sharp-consideration-duration-hundred.trycloudflare.com",
       status: "auto",
       announcement: "Server e-Rapor sedang tidak aktif. Silakan hubungi admin.",
       adminPin: "123456",
@@ -295,6 +295,9 @@
       if (currentData.status === "maintenance") return "maintenance";
       if (currentData.status === "offline") return "offline";
       if (isChecking && currentData.isUrlAlive === null) return "checking";
+      if (currentData.isUrlAlive === undefined || currentData.isUrlAlive === null) {
+        return currentData.url ? "online" : "offline";
+      }
       return currentData.isUrlAlive === true ? "online" : "offline";
     }
 
