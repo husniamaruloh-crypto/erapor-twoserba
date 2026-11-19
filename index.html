@@ -84,10 +84,10 @@
         <span id="statusDot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
       </span>
       <div class="min-w-0 leading-tight">
-        <div id="statusLabel" class="text-[11px] sm:text-xs font-bold tracking-wide truncate">Memuat Data...</div>
-        <div id="lastUpdatedBadge" class="text-[10px] sm:text-[11px] text-slate-300 font-medium truncate mt-0.5">Menghubungkan Sheet...</div>
+        <div id="statusLabel" class="text-[11px] sm:text-xs font-bold tracking-wide truncate">Memeriksa Server...</div>
+        <div id="lastUpdatedBadge" class="text-[10px] sm:text-[11px] text-slate-300 font-medium truncate mt-0.5">Menghubungkan...</div>
       </div>
-      <button id="btnRefreshCheck" type="button" title="Muat Ulang Data & Cek Server" class="ml-0.5 p-1.5 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/25 text-slate-200 transition shrink-0">
+      <button id="btnRefreshCheck" type="button" title="Cek Ulang Koneksi Server" class="ml-0.5 p-1.5 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/25 text-slate-200 transition shrink-0">
         <i id="refreshIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
       </button>
     </div>
@@ -112,7 +112,7 @@
     </div>
   </main>
 
-  <!-- Modal Login PIN Admin -->
+  <!-- Modal Login Password / PIN Admin -->
   <div id="pinModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/75 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100">
       <div class="flex items-center justify-between mb-4">
@@ -122,7 +122,7 @@
           </div>
           <div>
             <h3 class="font-bold text-slate-900 text-base">Login Panel Admin</h3>
-            <p class="text-xs text-slate-500">Masukkan PIN Operator Sekolah</p>
+            <p class="text-xs text-slate-500">Masukkan Password / PIN Admin</p>
           </div>
         </div>
         <button id="closePinModal" type="button" class="text-slate-400 hover:text-slate-600 p-1">
@@ -132,9 +132,9 @@
 
       <form id="pinForm" class="space-y-4">
         <div>
-          <input type="password" id="pinInput" inputmode="numeric" maxlength="8" placeholder="••••••" required
-            class="w-full text-center text-2xl tracking-[0.4em] font-bold py-3 px-4 rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none text-slate-800" />
-          <p id="pinError" class="text-xs text-red-600 mt-1.5 hidden text-center font-medium">PIN salah. Silakan coba lagi.</p>
+          <input type="password" id="pinInput" placeholder="Masukkan Password / PIN" required
+            class="w-full text-center text-lg tracking-wider font-bold py-3 px-4 rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none text-slate-800" />
+          <p id="pinError" class="text-xs text-red-600 mt-1.5 hidden text-center font-medium">Password / PIN salah. Silakan coba lagi.</p>
         </div>
         <button type="submit" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition">
           Buka Pengaturan
@@ -158,7 +158,7 @@
 
       <form id="updateForm" class="p-5 sm:p-6 space-y-4 max-h-[82dvh] overflow-y-auto">
         <div id="sheetSyncAlert" class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
-          <span id="sheetSyncText" class="font-semibold">Database Google Spreadsheet Siap (Menimpa Baris 2)</span>
+          <span id="sheetSyncText" class="font-semibold">Menghubungkan ke Google Spreadsheet...</span>
         </div>
 
         <div>
@@ -183,14 +183,14 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Pesan Notifikasi (Jika Server Offline)</label>
-          <textarea id="inputAnnouncement" rows="2" placeholder="Contoh: Server e-Rapor sedang offline. Silakan hubungi operator..."
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Pesan Notifikasi (Jika Server Tidak Aktif)</label>
+          <textarea id="inputAnnouncement" rows="2" placeholder="Contoh: Server e-Rapor sedang tidak aktif. Silakan hubungi admin."
             class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none text-sm text-slate-800"></textarea>
         </div>
 
         <div class="pt-2 border-t border-slate-100">
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Ubah PIN Admin (Tersimpan di Spreadsheet)</label>
-          <input type="text" id="inputNewPin" inputmode="numeric" maxlength="8" placeholder="Kosongkan jika tidak ingin mengubah PIN"
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Ubah Password / PIN Admin (Bebas Huruf, Angka, Simbol)</label>
+          <input type="text" id="inputNewPin" placeholder="Kosongkan jika tidak ingin mengubah"
             class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:border-blue-600 outline-none text-sm text-slate-800" />
         </div>
 
@@ -219,18 +219,18 @@
     // TEMPEL URL WEB APP GOOGLE APPS SCRIPT (/exec) ANDA DI BAWAH INI:
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqmrJR290B2902IM2AuaCbmDwup2eI_xDCNgVcIQonHu7CjCYeF5K2YO5MoxiFhQ7k/exec";
 
-    const LOCAL_CACHE_KEY = "erapor_smpn2_sheet_cache_v1";
+    const LOCAL_CACHE_KEY = "erapor_smpn2_sheet_cache_v2";
 
     const defaultState = {
       url: "https://sympathy-vacuum-silver-career.trycloudflare.com",
       status: "auto",
       announcement: "Server e-Rapor sedang tidak aktif. Silakan hubungi admin.",
       adminPin: "123456",
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      isUrlAlive: null
     };
 
     let currentData = loadLocalCache() || { ...defaultState };
-    let detectedOnline = null;
     let isChecking = false;
 
     const statusPing = document.getElementById("statusPing");
@@ -294,8 +294,8 @@
       if (currentData.status === "online") return "online";
       if (currentData.status === "maintenance") return "maintenance";
       if (currentData.status === "offline") return "offline";
-      if (isChecking && detectedOnline === null) return "checking";
-      return detectedOnline ? "online" : "offline";
+      if (isChecking && currentData.isUrlAlive === null) return "checking";
+      return currentData.isUrlAlive === true ? "online" : "offline";
     }
 
     function renderUI() {
@@ -304,11 +304,11 @@
       if (effectiveStatus === "checking") {
         statusPing.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75";
         statusDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500";
-        statusLabel.textContent = "Mengecek Server...";
+        statusLabel.textContent = "Mengecek Link Server...";
       } else if (effectiveStatus === "online") {
         statusPing.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
         statusDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500";
-        statusLabel.textContent = currentData.status === "auto" ? "Server Online (Aktif)" : "Server Online";
+        statusLabel.textContent = "Server Online (Aktif)";
       } else if (effectiveStatus === "maintenance") {
         statusPing.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75";
         statusDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500";
@@ -316,7 +316,7 @@
       } else {
         statusPing.className = "hidden";
         statusDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500";
-        statusLabel.textContent = currentData.status === "auto" ? "Server Offline" : "Server Ditutup";
+        statusLabel.textContent = "Server Tidak Aktif";
       }
 
       lastUpdatedBadge.textContent = formatDateTime(currentData.updatedAt);
@@ -332,12 +332,15 @@
       if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
         sheetSyncAlert.className = "p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800";
         sheetSyncText.textContent = "URL Apps Script belum dipasang di kode HTML.";
+        currentData.isUrlAlive = false;
         renderUI();
-        checkTunnelOnlineStatus(showFeedback);
         return;
       }
 
+      isChecking = true;
       refreshIcon.classList.add("animate-spin");
+      renderUI();
+
       try {
         const res = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now(), {
           method: "GET",
@@ -349,51 +352,21 @@
           saveLocalCache(currentData);
           sheetSyncAlert.className = "p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800";
           sheetSyncText.textContent = "Terhubung ke Google Spreadsheet • Data sinkron";
+
+          if (showFeedback) {
+            if (getEffectiveStatus() === "online") {
+              showToast("Server e-Rapor terdeteksi AKTIF.", "success");
+            } else {
+              showToast("Link error / tunnel mati: Server TIDAK AKTIF.", "error");
+            }
+          }
         }
       } catch (err) {
         console.error("Gagal membaca Spreadsheet:", err);
+        currentData.isUrlAlive = false;
         sheetSyncAlert.className = "p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800";
-        sheetSyncText.textContent = "Gagal membaca Spreadsheet. Periksa izin akses Web App (Anyone).";
+        sheetSyncText.textContent = "Gagal membaca Spreadsheet. Periksa deployment Apps Script.";
       } finally {
-        renderUI();
-        await checkTunnelOnlineStatus(showFeedback);
-      }
-    }
-
-    async function checkTunnelOnlineStatus(showFeedback = false) {
-      const targetUrl = (currentData.url || "").trim();
-      if (!targetUrl) {
-        detectedOnline = false;
-        refreshIcon.classList.remove("animate-spin");
-        renderUI();
-        return;
-      }
-
-      isChecking = true;
-      refreshIcon.classList.add("animate-spin");
-      renderUI();
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 7000);
-
-      try {
-        await fetch(targetUrl, {
-          method: "HEAD",
-          mode: "no-cors",
-          cache: "no-store",
-          signal: controller.signal
-        });
-        detectedOnline = true;
-        if (showFeedback) {
-          showToast("Server e-Rapor terdeteksi ONLINE dan aktif.", "success");
-        }
-      } catch (err) {
-        detectedOnline = false;
-        if (showFeedback) {
-          showToast("Server e-Rapor tidak merespons (OFFLINE).", "error");
-        }
-      } finally {
-        clearTimeout(timeoutId);
         isChecking = false;
         refreshIcon.classList.remove("animate-spin");
         renderUI();
@@ -443,7 +416,7 @@
     areaBooks.addEventListener("click", openEraporLink);
     areaKlikDisini.addEventListener("click", openEraporLink);
 
-    // Modal PIN & Admin
+    // Modal Password / PIN & Admin
     document.getElementById("btnOpenAdmin").addEventListener("click", async () => {
       pinInput.value = "";
       pinError.classList.add("hidden");
@@ -510,11 +483,11 @@
         url: cleanUrl,
         status: inputStatus.value,
         announcement: inputAnnouncement.value.trim() || defaultState.announcement,
-        adminPin: newPinVal.length >= 4 ? newPinVal : currentData.adminPin
+        adminPin: newPinVal !== "" ? newPinVal : currentData.adminPin
       };
 
       btnSaveSubmit.disabled = true;
-      btnSaveText.textContent = "Menyimpan ke Sheet...";
+      btnSaveText.textContent = "Menyimpan & Mengecek Link...";
 
       try {
         if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
@@ -539,8 +512,12 @@
         saveLocalCache(currentData);
         renderUI();
         hideAdminModal();
-        showToast("Tersimpan di Spreadsheet & menimpa data lama!");
-        checkTunnelOnlineStatus(false);
+
+        if (getEffectiveStatus() === "online") {
+          showToast("Tersimpan! Link terdeteksi AKTIF.", "success");
+        } else {
+          showToast("Tersimpan, namun link error / belum aktif (Server Tidak Aktif).", "error");
+        }
       } catch (err) {
         console.error("Save error:", err);
         showToast("Gagal menyimpan: " + err.message, "error");
