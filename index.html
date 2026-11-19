@@ -1,560 +1,169 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Akses e-Rapor - SMP Negeri 2 Serang Baru</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0b192c;
-            min-height: 100dvh;
-        }
-        /* Animasi halus untuk transisi modal dan status */
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 0.8; }
-            100% { transform: scale(2); opacity: 0; }
-        }
-        .animate-pulse-ring {
-            animation: pulse-ring 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-        }
-        /* Efek sorot halus saat kursor/sentuhan mengarah ke area interaktif pada poster */
-        .hotspot-area {
-            transition: all 0.25s ease;
-            -webkit-tap-highlight-color: rgba(56, 189, 248, 0.25);
-        }
-        .hotspot-area:hover, .hotspot-area:active {
-            background-color: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 0 24px rgba(56, 189, 248, 0.45);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Portal Akses e-Rapor SMPN 2 Serang Baru</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b132b;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .poster-wrapper {
+      position: relative;
+      width: 100vw;
+      height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #132247 0%, #070d1f 100%);
+    }
+    .poster-stage {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      width: min(100vw, calc(100dvh * (16 / 9)));
+      height: min(100dvh, calc(100vw * (9 / 16)));
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
+    }
+    @media (max-width: 768px) and (orientation: portrait) {
+      .poster-stage {
+        width: 100vw;
+        height: auto;
+        aspect-ratio: 16 / 9;
+      }
+    }
+    .poster-img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+      pointer-events: none;
+    }
+    .hotspot {
+      position: absolute;
+      cursor: pointer;
+      border-radius: 14px;
+      transition: all 0.2s ease;
+    }
+    .hotspot:hover, .hotspot:active {
+      background-color: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.45), 0 10px 25px rgba(56, 189, 248, 0.35);
+      transform: scale(1.015);
+    }
+    .hotspot-books {
+      left: 34.5%;
+      top: 39.5%;
+      width: 31%;
+      height: 29.5%;
+    }
+    .hotspot-klik {
+      left: 38.5%;
+      top: 71.5%;
+      width: 23%;
+      height: 9.5%;
+      border-radius: 9999px;
+    }
+  </style>
 </head>
-<body class="text-slate-800 w-screen overflow-hidden flex items-center justify-center relative selection:bg-blue-600 selection:text-white" style="height: 100dvh;">
+<body>
 
-    <!-- Latar Belakang Full-Screen (Blur lembut untuk mengisi tepi layar HP maupun Desktop) -->
-    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <img src="https://i.ibb.co.com/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png"
-             alt=""
-             class="w-full h-full object-cover blur-2xl scale-110 opacity-45">
-        <div class="absolute inset-0 bg-slate-950/40"></div>
+  <!-- Baris Kontrol Atas -->
+  <div class="fixed top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-40 flex items-start justify-between gap-2 pointer-events-none">
+    <!-- Status Server & Waktu Pembaruan -->
+    <div id="statusBadge" class="pointer-events-auto flex items-center gap-2.5 px-3 py-2 sm:px-3.5 sm:py-2 rounded-2xl bg-slate-900/90 backdrop-blur-md border border-white/15 shadow-lg text-white max-w-[66vw] sm:max-w-xs">
+      <span class="relative flex h-2.5 w-2.5 shrink-0">
+        <span id="statusPing" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+        <span id="statusDot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+      </span>
+      <div class="min-w-0 leading-tight">
+        <div id="statusLabel" class="text-[11px] sm:text-xs font-bold tracking-wide truncate">Memeriksa Server...</div>
+        <div id="lastUpdatedBadge" class="text-[10px] sm:text-[11px] text-slate-300 font-medium truncate mt-0.5">Memuat waktu...</div>
+      </div>
+      <button id="btnRefreshCheck" type="button" title="Cek Ulang Koneksi Server" class="ml-0.5 p-1.5 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/25 text-slate-200 transition shrink-0">
+        <i id="refreshIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+      </button>
     </div>
 
-    <!-- Bar Status Mengambang di Pojok Atas (Responsif untuk Android & Desktop) -->
-    <div class="fixed top-2.5 left-2.5 right-2.5 sm:top-3 sm:left-3 sm:right-3 z-30 flex items-start justify-between gap-2 pointer-events-none">
-        <!-- Indikator Status Server + Keterangan Tanggal & Waktu di bawahnya -->
-        <div class="pointer-events-auto inline-flex items-center gap-2 sm:gap-2.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-white/15 text-white shadow-lg max-w-[66%] sm:max-w-none">
-            <span id="statusDotWrapper" class="relative flex h-2.5 w-2.5 shrink-0">
-                <span id="statusPing" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span id="statusDot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
-            </span>
-            <div class="flex flex-col min-w-0">
-                <span id="statusBadgeText" class="text-[11px] sm:text-xs font-semibold tracking-wide leading-tight truncate">Memeriksa Server...</span>
-                <span id="lastUpdatedText" class="text-[10px] text-slate-300 leading-tight mt-0.5 truncate">Memuat waktu...</span>
-            </div>
-            <button id="btnRefreshPing" type="button" title="Cek Ulang Status Server" class="ml-0.5 p-1.5 rounded-full hover:bg-white/15 active:bg-white/25 text-slate-300 hover:text-white transition-colors shrink-0">
-                <i data-lucide="refresh-cw" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-            </button>
-        </div>
+    <!-- Tombol Panel Admin -->
+    <button id="btnOpenAdmin" type="button" class="pointer-events-auto flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-800 active:bg-slate-700 backdrop-blur-md border border-white/15 shadow-lg text-[11px] sm:text-xs font-bold text-white transition shrink-0">
+      <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400"></i>
+      <span>Panel Admin</span>
+    </button>
+  </div>
 
-        <!-- Tombol Panel Admin di Pojok Kanan Atas -->
-        <button id="btnOpenOperator" type="button"
-                class="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-2 rounded-full bg-slate-900/85 hover:bg-slate-800 active:scale-95 backdrop-blur-md border border-white/15 text-white text-[11px] sm:text-xs font-semibold shadow-lg transition-all shrink-0">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-sky-400 shrink-0"></i>
-            <span>Panel Admin</span>
+  <!-- Poster Utama Full-Screen -->
+  <main class="poster-wrapper">
+    <div class="poster-stage">
+      <img
+        src="https://i.ibb.co.com/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png"
+        alt="Portal e-Rapor SMPN 2 Serang Baru"
+        class="poster-img"
+      />
+      <div id="areaBooks" class="hotspot hotspot-books" role="button" tabindex="0" aria-label="Buka e-Rapor lewat Gambar Buku" title="Klik untuk membuka e-Rapor"></div>
+      <div id="areaKlikDisini" class="hotspot hotspot-klik" role="button" tabindex="0" aria-label="Klik Disini untuk Buka e-Rapor" title="Klik Disini untuk membuka e-Rapor"></div>
+    </div>
+  </main>
+
+  <!-- Modal Login PIN Admin -->
+  <div id="pinModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/75 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <i data-lucide="lock" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Login Panel Admin</h3>
+            <p class="text-xs text-slate-500">Masukkan PIN Operator Sekolah</p>
+          </div>
+        </div>
+        <button id="closePinModal" type="button" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
         </button>
-    </div>
+      </div>
 
-    <!-- Kontainer Poster Utama dengan Hotspot Presisi (Menyesuaikan Layar Android & Desktop) -->
-    <main class="relative z-10 w-full h-full flex items-center justify-center p-1 sm:p-2">
-        <div id="posterWrapper" class="relative inline-flex items-center justify-center max-w-full max-h-full shadow-2xl">
-            <!-- Gambar Poster Utama -->
-            <img id="posterImage"
-                 src="https://i.ibb.co.com/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png"
-                 alt="Portal e-Rapor SMP Negeri 2 Serang Baru"
-                 onerror="this.onerror=null; this.src='https://placehold.co/1280x720/0f172a/ffffff?text=Portal+e-Rapor+SMPN+2+Serang+Baru';"
-                 style="max-height: calc(100dvh - 12px); max-width: 100vw;"
-                 class="w-auto h-auto object-contain select-none block rounded-lg sm:rounded-xl">
-
-            <!-- HOTSPOT: Area Gambar Buku & Tulisan "KLIK DISINI" untuk Guru -->
-            <a id="btnLaunchErapor"
-               href="#"
-               target="_blank"
-               rel="noopener noreferrer"
-               title="Klik disini atau gambar buku untuk membuka e-Rapor"
-               aria-label="Buka Aplikasi e-Rapor"
-               style="top: 32%; left: 26%; width: 48%; height: 47%;"
-               class="hotspot-area absolute z-20 rounded-2xl sm:rounded-3xl cursor-pointer flex items-end justify-center pb-1.5 sm:pb-2 group">
-                <span id="hoverGuruHint" class="opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity bg-blue-600/95 text-white text-[10px] sm:text-xs font-bold px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full shadow-lg border border-white/20 flex items-center gap-1.5">
-                    <span>Buka Aplikasi e-Rapor</span>
-                    <i data-lucide="external-link" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                </span>
-            </a>
+      <form id="pinForm" class="space-y-4">
+        <div>
+          <input type="password" id="pinInput" inputmode="numeric" maxlength="8" placeholder="••••••" required
+            class="w-full text-center text-2xl tracking-[0.4em] font-bold py-3 px-4 rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none text-slate-800" />
+          <p id="pinError" class="text-xs text-red-600 mt-1.5 hidden text-center font-medium">PIN salah. Silakan coba lagi.</p>
         </div>
-    </main>
-
-    <!-- Modal Panel Operator -->
-    <div id="operatorModal" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all my-auto">
-            <!-- Header Modal -->
-            <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <i data-lucide="shield-check" class="w-5 h-5 text-blue-400"></i>
-                    <h3 class="font-bold text-base">Panel Admin e-Rapor</h3>
-                </div>
-                <button id="btnCloseModal" type="button" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <!-- Langkah 1: Verifikasi PIN -->
-            <div id="pinStep" class="p-6 space-y-4">
-                <p class="text-sm text-slate-600 leading-relaxed">
-                    Masukkan <strong>PIN Admin</strong> untuk memperbarui link Cloudflare Tunnel e-Rapor.
-                </p>
-                <div>
-                    <label for="inputPin" class="block text-xs font-semibold text-slate-700 mb-1.5">PIN Keamanan (Default: 123456)</label>
-                    <input type="password" id="inputPin" inputmode="numeric" maxlength="12" placeholder="Masukkan PIN..."
-                           class="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 font-semibold tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
-                    <p id="pinErrorMsg" class="hidden text-xs text-red-600 font-medium mt-1.5">PIN salah. Silakan coba lagi.</p>
-                </div>
-                <button id="btnVerifyPin" type="button" class="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition-colors">
-                    Masuk ke Pengaturan
-                </button>
-            </div>
-
-            <!-- Langkah 2: Form Update Link Cloudflare -->
-            <form id="updateForm" class="hidden p-6 space-y-4">
-                <div>
-                    <label for="inputCloudflareUrl" class="block text-xs font-bold text-slate-700 mb-1.5">Link Cloudflare Tunnel Terbaru</label>
-                    <div class="relative flex items-center">
-                        <input type="url" id="inputCloudflareUrl" required placeholder="https://contoh-link.trycloudflare.com"
-                               class="w-full pl-3.5 pr-11 py-3 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
-                        <button type="button" id="btnPasteUrl" title="Tempel dari Clipboard"
-                                class="absolute right-2 p-2 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors">
-                            <i data-lucide="clipboard-paste" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="selectStatus" class="block text-xs font-bold text-slate-700 mb-1.5">Mode Status Server e-Rapor</label>
-                    <select id="selectStatus" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600">
-                        <option value="auto">🤖 Deteksi Otomatis (Cek Langsung Link Cloudflare)</option>
-                        <option value="online">🟢 Paksa Online (Selalu Aktif)</option>
-                        <option value="maintenance">🟠 Pemeliharaan / Sinkronisasi Dapodik</option>
-                        <option value="offline">🔴 Offline (Server Sedang Dimatikan)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="inputAnnouncement" class="block text-xs font-bold text-slate-700 mb-1.5">Pesan Notifikasi (Jika Server Offline)</label>
-                    <textarea id="inputAnnouncement" rows="2" placeholder="Contoh: Server sedang pemeliharaan, silakan coba beberapa saat lagi..."
-                              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
-                </div>
-
-                <div class="pt-1 border-t border-slate-100">
-                    <label for="inputNewPin" class="block text-xs font-semibold text-slate-600 mb-1">Ubah PIN Admin (Sinkron di Semua Perangkat)</label>
-                    <input type="text" id="inputNewPin" inputmode="numeric" maxlength="12" placeholder="Kosongkan jika tidak ingin mengubah PIN"
-                           class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600">
-                </div>
-
-                <div class="flex items-center gap-3 pt-2">
-                    <button type="button" id="btnCancelForm" class="w-1/3 py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition-colors">
-                        Batal
-                    </button>
-                    <button type="submit" id="btnSaveConfig" class="w-2/3 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-600/20 flex items-center justify-center gap-2 transition-colors">
-                        <i data-lucide="save" class="w-4 h-4"></i>
-                        <span>Simpan & Publikasikan</span>
-                    </button>
-                </div>
-            </form>
-        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition">
+          Buka Pengaturan
+        </button>
+      </form>
     </div>
+  </div>
 
-    <!-- Notifikasi Toast (Pengganti alert) -->
-    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-        <div class="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-medium border border-slate-700">
-            <i id="toastIcon" data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
-            <span id="toastMessage">Berhasil disimpan!</span>
+  <!-- Modal Pengaturan Panel Admin -->
+  <div id="adminModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/75 backdrop-blur-sm p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100 my-auto">
+      <div class="bg-slate-900 px-6 py-4 flex items-center justify-between text-white">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="shield-check" class="w-5 h-5 text-amber-400"></i>
+          <h3 class="font-bold text-base">Panel Admin e-Rapor</h3>
         </div>
-    </div>
+        <button id="closeAdminModal" type="button" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
 
-    <!-- Firebase SDK & Logika Aplikasi -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+      <form id="updateForm" class="p-5 sm:p-6 space-y-4 max-h-[82dvh] overflow-y-auto">
+        <!-- Indikator Status Sync Cloud -->
+        <div id="cloudSyncAlert" class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center justify-between gap-2">
+          <span id="cloudSyncText" class="font-semibold">Menghubungkan ke database dberaportwoserba...</span>
+        </div>
 
-        // Inisialisasi ikon Lucide
-        lucide.createIcons();
-
-        // Gunakan ID aplikasi tetap agar semua perangkat (Laptop, HP Android, dll) membaca dokumen cloud yang sama persis
-        const SHARED_APP_ID = 'erapor-smpn2-serangbaru-portal';
-        const appId = typeof __app_id !== 'undefined' && __app_id ? __app_id : SHARED_APP_ID;
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-
-        let db = null;
-        let auth = null;
-        let currentUser = null;
-        let hasLoadedCloudData = false;
-
-        // Format tanggal & waktu bahasa Indonesia
-        function formatDateTimeNow() {
-            return new Date().toLocaleString('id-ID', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            }) + ' WIB';
-        }
-
-        // State default aplikasi
-        let portalConfig = {
-            targetUrl: 'https://sympathy-vacuum-silver-career.trycloudflare.com',
-            status: 'auto', // 'auto' | 'online' | 'maintenance' | 'offline'
-            announcement: 'Server e-Rapor sedang tidak aktif. Silakan hubungi admin.',
-            operatorPin: '123456',
-            updatedAt: formatDateTimeNow()
-        };
-        let pingIntervalId = null;
-
-        // Referensi Elemen DOM
-        const btnLaunchErapor = document.getElementById('btnLaunchErapor');
-        const statusBadgeText = document.getElementById('statusBadgeText');
-        const statusDot = document.getElementById('statusDot');
-        const statusPing = document.getElementById('statusPing');
-        const btnRefreshPing = document.getElementById('btnRefreshPing');
-        const lastUpdatedText = document.getElementById('lastUpdatedText');
-        const hoverGuruHint = document.getElementById('hoverGuruHint');
-        const operatorModal = document.getElementById('operatorModal');
-        const pinStep = document.getElementById('pinStep');
-        const updateForm = document.getElementById('updateForm');
-        const inputPin = document.getElementById('inputPin');
-        const pinErrorMsg = document.getElementById('pinErrorMsg');
-
-        const inputCloudflareUrl = document.getElementById('inputCloudflareUrl');
-        const selectStatus = document.getElementById('selectStatus');
-        const inputAnnouncement = document.getElementById('inputAnnouncement');
-        const inputNewPin = document.getElementById('inputNewPin');
-
-        // Fungsi menampilkan notifikasi Toast
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toastNotification');
-            const toastMsg = document.getElementById('toastMessage');
-            const toastIcon = document.getElementById('toastIcon');
-
-            toastMsg.textContent = message;
-            if (isError) {
-                toastIcon.setAttribute('data-lucide', 'alert-circle');
-                toastIcon.setAttribute('class', 'w-5 h-5 text-red-400 shrink-0');
-            } else {
-                toastIcon.setAttribute('data-lucide', 'check-circle-2');
-                toastIcon.setAttribute('class', 'w-5 h-5 text-emerald-400 shrink-0');
-            }
-            lucide.createIcons();
-
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3500);
-        }
-
-        // Fungsi mengecek apakah link Cloudflare benar-benar merespons (Online) atau mati (Offline)
-        async function checkCloudflareReachability(url) {
-            if (!url) return false;
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
-            try {
-                await fetch(url, {
-                    method: 'HEAD',
-                    mode: 'no-cors',
-                    cache: 'no-store',
-                    signal: controller.signal
-                });
-                clearTimeout(timeoutId);
-                return true;
-            } catch (err) {
-                clearTimeout(timeoutId);
-                return false;
-            }
-        }
-
-        // Terapkan tampilan status Online / Offline / Maintenance
-        function applyStatusVisual(effectiveStatus, isAutoDetected = false) {
-            if (effectiveStatus === 'online' && portalConfig.targetUrl) {
-                btnLaunchErapor.href = portalConfig.targetUrl;
-                btnLaunchErapor.dataset.active = 'true';
-                statusBadgeText.textContent = isAutoDetected ? 'Server Online' : 'Server Online';
-                statusDot.className = 'relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400';
-                statusPing.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75';
-                hoverGuruHint.innerHTML = '<span>Buka Aplikasi e-Rapor</span><i data-lucide="external-link" class="w-3.5 h-3.5"></i>';
-            } else if (effectiveStatus === 'maintenance') {
-                btnLaunchErapor.href = '#';
-                btnLaunchErapor.dataset.active = 'false';
-                statusBadgeText.textContent = 'Sedang Pemeliharaan';
-                statusDot.className = 'relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400';
-                statusPing.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75';
-                hoverGuruHint.innerHTML = '<span>Sedang Pemeliharaan</span><i data-lucide="wrench" class="w-3.5 h-3.5"></i>';
-            } else {
-                btnLaunchErapor.href = '#';
-                btnLaunchErapor.dataset.active = 'false';
-                statusBadgeText.textContent = 'Server Offline';
-                statusDot.className = 'relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500';
-                statusPing.className = 'hidden';
-                hoverGuruHint.innerHTML = '<span>Server Offline</span><i data-lucide="power-off" class="w-3.5 h-3.5"></i>';
-            }
-            lucide.createIcons();
-        }
-
-        // Fungsi memperbarui tampilan UI berdasarkan konfigurasi terbaru
-        async function renderUI(data) {
-            if (data) {
-                portalConfig = {
-                    ...portalConfig,
-                    ...data,
-                    operatorPin: data.operatorPin ? String(data.operatorPin).trim() : portalConfig.operatorPin
-                };
-            }
-
-            lastUpdatedText.textContent = 'Update: ' + (portalConfig.updatedAt || formatDateTimeNow());
-
-            if (portalConfig.status === 'auto') {
-                statusBadgeText.textContent = 'Mengecek Server...';
-                statusDot.className = 'relative inline-flex rounded-full h-2.5 w-2.5 bg-sky-400';
-                statusPing.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75';
-
-                const isAlive = await checkCloudflareReachability(portalConfig.targetUrl);
-                applyStatusVisual(isAlive ? 'online' : 'offline', true);
-            } else {
-                applyStatusVisual(portalConfig.status, false);
-            }
-        }
-
-        // Tangani klik pada area buku / "KLIK DISINI" saat server belum online
-        btnLaunchErapor.addEventListener('click', (e) => {
-            if (btnLaunchErapor.dataset.active !== 'true') {
-                e.preventDefault();
-                const offlineMsg = portalConfig.announcement || 'Server e-Rapor sedang tidak aktif. Silakan hubungi admin.';
-                showToast(offlineMsg, true);
-            }
-        });
-
-        // Tombol cek ulang manual pada badge status
-        btnRefreshPing.addEventListener('click', async () => {
-            btnRefreshPing.classList.add('animate-spin');
-            await renderUI(portalConfig);
-            setTimeout(() => btnRefreshPing.classList.remove('animate-spin'), 500);
-        });
-
-        // Kontrol Buka/Tutup Modal Admin (Tombol di pojok kanan atas)
-        async function openModal() {
-            operatorModal.classList.remove('hidden');
-            pinStep.classList.remove('hidden');
-            updateForm.classList.add('hidden');
-            pinErrorMsg.classList.add('hidden');
-            inputPin.value = '';
-            setTimeout(() => inputPin.focus(), 100);
-
-            // Pastikan mengambil PIN & data terbaru dari server sebelum verifikasi
-            if (db && currentUser) {
-                try {
-                    const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'portal_settings', 'erapor_link');
-                    const snap = await getDoc(configDocRef);
-                    if (snap.exists()) {
-                        const cloudData = snap.data();
-                        portalConfig = {
-                            ...portalConfig,
-                            ...cloudData,
-                            operatorPin: cloudData.operatorPin ? String(cloudData.operatorPin).trim() : portalConfig.operatorPin
-                        };
-                    }
-                } catch (err) {
-                    console.warn('Gagal menyegarkan PIN terbaru:', err);
-                }
-            }
-        }
-
-        function closeModal() {
-            operatorModal.classList.add('hidden');
-        }
-
-        document.getElementById('btnOpenOperator').addEventListener('click', openModal);
-        document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-        document.getElementById('btnCancelForm').addEventListener('click', closeModal);
-
-        // Tutup modal jika klik area gelap di luar kotak
-        operatorModal.addEventListener('click', (e) => {
-            if (e.target === operatorModal) closeModal();
-        });
-
-        // Verifikasi PIN Admin
-        function verifyPin() {
-            const enteredPin = String(inputPin.value).trim();
-            const activePin = String(portalConfig.operatorPin || '123456').trim();
-            if (enteredPin === activePin) {
-                pinErrorMsg.classList.add('hidden');
-                pinStep.classList.add('hidden');
-                updateForm.classList.remove('hidden');
-
-                // Isi form dengan data saat ini
-                inputCloudflareUrl.value = portalConfig.targetUrl || '';
-                selectStatus.value = portalConfig.status || 'auto';
-                inputAnnouncement.value = portalConfig.announcement || '';
-                inputNewPin.value = '';
-            } else {
-                pinErrorMsg.classList.remove('hidden');
-                inputPin.select();
-            }
-        }
-
-        document.getElementById('btnVerifyPin').addEventListener('click', verifyPin);
-        inputPin.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                verifyPin();
-            }
-        });
-
-        // Tombol Paste Cepat dari Clipboard
-        document.getElementById('btnPasteUrl').addEventListener('click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                if (text) {
-                    inputCloudflareUrl.value = text.trim();
-                    showToast('Link berhasil ditempel dari clipboard.');
-                }
-            } catch (err) {
-                inputCloudflareUrl.focus();
-                showToast('Tekan tempel/paste pada kolom link.', true);
-            }
-        });
-
-        // Proses Simpan Konfigurasi Baru ke Firebase Firestore
-        updateForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            let rawUrl = inputCloudflareUrl.value.trim();
-            if (rawUrl && !rawUrl.startsWith('http://') && !rawUrl.startsWith('https://')) {
-                rawUrl = 'https://' + rawUrl;
-            }
-
-            const newPin = String(inputNewPin.value).trim();
-            const updatedData = {
-                targetUrl: rawUrl,
-                status: selectStatus.value,
-                announcement: inputAnnouncement.value.trim(),
-                operatorPin: newPin.length >= 4 ? newPin : String(portalConfig.operatorPin || '123456'),
-                updatedAt: formatDateTimeNow(),
-                updatedTimestamp: Date.now()
-            };
-
-            const btnSave = document.getElementById('btnSaveConfig');
-            const originalBtnHtml = btnSave.innerHTML;
-            btnSave.disabled = true;
-            btnSave.innerHTML = '<span>Menyimpan...</span>';
-
-            try {
-                if (db && auth) {
-                    if (!currentUser) {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await signInWithCustomToken(auth, __initial_auth_token);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    }
-                    const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'portal_settings', 'erapor_link');
-                    await setDoc(configDocRef, updatedData, { merge: true });
-                }
-
-                await renderUI(updatedData);
-                closeModal();
-                showToast('Link & PIN tersimpan dan sinkron di semua perangkat!');
-            } catch (error) {
-                console.error('Gagal menyimpan konfigurasi:', error);
-                showToast('Gagal menyimpan (' + (error.code || error.message) + '). Periksa koneksi.', true);
-            } finally {
-                btnSave.disabled = false;
-                btnSave.innerHTML = originalBtnHtml;
-                lucide.createIcons();
-            }
-        });
-
-        // Inisialisasi Firebase & Listener Real-Time (Anti-Timpa Antar Perangkat)
-        async function initCloudSync() {
-            // Cek status link Cloudflare secara berkala setiap 30 detik jika dalam mode otomatis
-            if (pingIntervalId) clearInterval(pingIntervalId);
-            pingIntervalId = setInterval(() => {
-                if (portalConfig.status === 'auto') {
-                    renderUI(portalConfig);
-                }
-            }, 30000);
-
-            if (!firebaseConfig) {
-                renderUI(portalConfig);
-                return;
-            }
-
-            try {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                onAuthStateChanged(auth, async (user) => {
-                    currentUser = user;
-                    if (user) {
-                        const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'portal_settings', 'erapor_link');
-                        
-                        // Ambil data awal terlebih dahulu agar perangkat baru tidak menimpa data lama
-                        try {
-                            const initialSnap = await getDoc(configDocRef);
-                            if (initialSnap.exists()) {
-                                hasLoadedCloudData = true;
-                                await renderUI(initialSnap.data());
-                            } else if (!hasLoadedCloudData) {
-                                // Hanya buat dokumen awal jika benar-benar belum pernah ada di database
-                                await setDoc(configDocRef, {
-                                    ...portalConfig,
-                                    updatedTimestamp: Date.now()
-                                });
-                                await renderUI(portalConfig);
-                            }
-                        } catch (readErr) {
-                            console.error('Gagal membaca data awal:', readErr);
-                            await renderUI(portalConfig);
-                        }
-
-                        // Dengarkan setiap perubahan secara real-time dari perangkat manapun
-                        onSnapshot(configDocRef, (snapshot) => {
-                            if (snapshot.exists()) {
-                                hasLoadedCloudData = true;
-                                renderUI(snapshot.data());
-                            }
-                        }, (err) => {
-                            console.error('Error membaca data real-time:', err);
-                        });
-                    }
-                });
-            } catch (err) {
-                console.error('Gagal menginisialisasi Firebase:', err);
-                renderUI(portalConfig);
-            }
-        }
-
-        // Jalankan aplikasi
-        initCloudSync();
-    </script>
-</body>
-</html>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Link Cloudflare Tunnel Terbaru</label>
+          <div class="relative flex items-center">
+            <input type="url" id="inputCloudflareUrl" placeholder="https://contoh-link.trycloudflare.com" required
+              class
