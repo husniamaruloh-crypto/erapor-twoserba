@@ -329,7 +329,7 @@
     }
 
     async function fetchFromSpreadsheet(showFeedback = false) {
-      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbyqmrJR290B2902IM2AuaCbmDwup2eI_xDCNgVcIQonHu7CjCYeF5K2YO5MoxiFhQ7k/exec")) {
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
         sheetSyncAlert.className = "p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800";
         sheetSyncText.textContent = "URL Apps Script belum dipasang di kode HTML.";
         renderUI();
@@ -517,7 +517,7 @@
       btnSaveText.textContent = "Menyimpan ke Sheet...";
 
       try {
-        if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbyqmrJR290B2902IM2AuaCbmDwup2eI_xDCNgVcIQonHu7CjCYeF5K2YO5MoxiFhQ7k/exec")) {
+        if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
           throw new Error("URL Apps Script belum diatur di index.html");
         }
 
