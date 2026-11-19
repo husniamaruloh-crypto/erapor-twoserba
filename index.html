@@ -219,18 +219,18 @@
     // TEMPEL URL WEB APP GOOGLE APPS SCRIPT (/exec) ANDA DI BAWAH INI:
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqmrJR290B2902IM2AuaCbmDwup2eI_xDCNgVcIQonHu7CjCYeF5K2YO5MoxiFhQ7k/exec";
 
-    const LOCAL_CACHE_KEY = "erapor_smpn2_sheet_cache_v3";
+    const LOCAL_CACHE_KEY = "erapor_smpn2_sheet_cache_v4";
 
     const defaultState = {
       url: "https://sharp-consideration-duration-hundred.trycloudflare.com",
       status: "auto",
       announcement: "Server e-Rapor sedang tidak aktif. Silakan hubungi admin.",
       adminPin: "123456",
-      updatedAt: new Date().toISOString(),
-      isUrlAlive: null
+      updatedAt: new Date().toISOString()
     };
 
     let currentData = loadLocalCache() || { ...defaultState };
+    let browserDetectedOnline = null;
     let isChecking = false;
 
     const statusPing = document.getElementById("statusPing");
@@ -294,11 +294,8 @@
       if (currentData.status === "online") return "online";
       if (currentData.status === "maintenance") return "maintenance";
       if (currentData.status === "offline") return "offline";
-      if (isChecking && currentData.isUrlAlive === null) return "checking";
-      if (currentData.isUrlAlive === undefined || currentData.isUrlAlive === null) {
-        return currentData.url ? "online" : "offline";
-      }
-      return currentData.isUrlAlive === true ? "online" : "offline";
+      if (isChecking && browserDetectedOnline === null) return "checking";
+      return browserDetectedOnline === true ? "online" : "offline";
     }
 
     function renderUI() {
@@ -331,53 +328,90 @@
       }
     }
 
-    async function fetchFromSpreadsheet(showFeedback = false) {
-      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
-        sheetSyncAlert.className = "p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800";
-        sheetSyncText.textContent = "URL Apps Script belum dipasang di kode HTML.";
-        currentData.isUrlAlive = false;
-        renderUI();
-        return;
-      }
+    // Mengecek langsung dari browser menggunakan favicon.ico (gagal/onerror jika Cloudflare error 530/1033)
+    function checkLinkDirectlyFromBrowser(targetUrl) {
+      return new Promise((resolve) => {
+        if (!targetUrl) {
+          resolve(false);
+          return;
+        }
+        const cleanBase = targetUrl.replace(/\/+$/, "");
+        const img = new Image();
+        let settled = false;
 
+        const timer = setTimeout(() => {
+          if (!settled) {
+            settled = true;
+            img.src = "";
+            resolve(false);
+          }
+        }, 7000);
+
+        img.onload = () => {
+          if (!settled) {
+            settled = true;
+            clearTimeout(timer);
+            resolve(true);
+          }
+        };
+
+        img.onerror = () => {
+          if (!settled) {
+            settled = true;
+            clearTimeout(timer);
+            resolve(false);
+          }
+        };
+
+        img.src = cleanBase + "/favicon.ico?ping=" + Date.now();
+      });
+    }
+
+    async function syncAndCheck(showFeedback = false) {
       isChecking = true;
       refreshIcon.classList.add("animate-spin");
       renderUI();
 
-      try {
-        const res = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now(), {
-          method: "GET",
-          cache: "no-store"
-        });
-        const json = await res.json();
-        if (json && json.ok && json.data) {
-          currentData = { ...defaultState, ...json.data };
-          saveLocalCache(currentData);
-          sheetSyncAlert.className = "p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800";
-          sheetSyncText.textContent = "Terhubung ke Google Spreadsheet • Data sinkron";
-
-          if (showFeedback) {
-            if (getEffectiveStatus() === "online") {
-              showToast("Server e-Rapor terdeteksi AKTIF.", "success");
-            } else {
-              showToast("Link error / tunnel mati: Server TIDAK AKTIF.", "error");
-            }
+      if (APPS_SCRIPT_URL && !APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
+        try {
+          const res = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now(), {
+            method: "GET",
+            cache: "no-store"
+          });
+          const json = await res.json();
+          if (json && json.ok && json.data) {
+            currentData = { ...defaultState, ...json.data };
+            saveLocalCache(currentData);
+            sheetSyncAlert.className = "p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800";
+            sheetSyncText.textContent = "Terhubung ke Google Spreadsheet • Data sinkron";
           }
+        } catch (err) {
+          console.error("Gagal membaca Spreadsheet:", err);
+          sheetSyncAlert.className = "p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800";
+          sheetSyncText.textContent = "Gagal membaca Spreadsheet. Periksa izin Web App (Anyone).";
         }
-      } catch (err) {
-        console.error("Gagal membaca Spreadsheet:", err);
-        currentData.isUrlAlive = false;
-        sheetSyncAlert.className = "p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800";
-        sheetSyncText.textContent = "Gagal membaca Spreadsheet. Periksa deployment Apps Script.";
-      } finally {
-        isChecking = false;
-        refreshIcon.classList.remove("animate-spin");
-        renderUI();
+      } else {
+        sheetSyncAlert.className = "p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800";
+        sheetSyncText.textContent = "URL Apps Script belum dipasang di kode HTML.";
+      }
+
+      browserDetectedOnline = await checkLinkDirectlyFromBrowser(currentData.url);
+
+      isChecking = false;
+      refreshIcon.classList.remove("animate-spin");
+      renderUI();
+
+      if (showFeedback) {
+        if (getEffectiveStatus() === "online") {
+          showToast("Server e-Rapor terdeteksi AKTIF.", "success");
+        } else {
+          showToast("Link error / tunnel mati: Server TIDAK AKTIF.", "error");
+        }
       }
     }
 
     btnRefreshCheck.addEventListener("click", () => {
-      fetchFromSpreadsheet(true);
+      syncAndCheck(true);
     });
 
     function showToast(message, type = "success") {
@@ -426,7 +460,7 @@
       pinModal.classList.remove("hidden");
       pinModal.classList.add("flex");
       setTimeout(() => pinInput.focus(), 100);
-      await fetchFromSpreadsheet(false);
+      await syncAndCheck(false);
     });
 
     document.getElementById("closePinModal").addEventListener("click", () => {
@@ -513,6 +547,7 @@
         }
 
         saveLocalCache(currentData);
+        browserDetectedOnline = await checkLinkDirectlyFromBrowser(currentData.url);
         renderUI();
         hideAdminModal();
 
@@ -532,12 +567,12 @@
 
     setInterval(() => {
       if (!isChecking && adminModal.classList.contains("hidden")) {
-        fetchFromSpreadsheet(false);
+        syncAndCheck(false);
       }
     }, 30000);
 
     renderUI();
-    fetchFromSpreadsheet(false);
+    syncAndCheck(false);
   </script>
 </body>
 </html>
