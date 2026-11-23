@@ -105,15 +105,15 @@
   <!-- Poster Utama Full-Screen -->
   <main class="poster-wrapper">
     <div class="poster-stage">
-      <!-- Gambar Poster dengan Auto-Fallback Multi-Server -->
+      <!-- Memuat poster.png langsung dari folder GitHub dengan Auto-Fallback -->
       <img
         id="posterBackgroundImg"
-        src="https://i.ibb.co/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png"
+        src="./poster.png"
         alt="Portal e-Rapor SMPN 2 Serang Baru"
         class="poster-img"
       />
 
-      <!-- Tampilan Poster Cadangan Bawaan (Hanya muncul jika semua URL gambar luar diblokir jaringan) -->
+      <!-- Tampilan Poster Cadangan Bawaan -->
       <div id="fallbackPosterUI" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-6 text-white">
         <div class="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-sky-300 font-bold mb-1">SMP Negeri 2 Serang Baru</div>
         <h1 class="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white drop-shadow">PORTAL AKSES e-RAPOR SMP</h1>
@@ -236,12 +236,12 @@
   <script>
     lucide.createIcons();
 
-    // Auto-Fallback Gambar Background Poster jika salah satu link CDN diblokir
+    // Urutan sumber gambar poster (prioritas file lokal di GitHub: poster.png / poster.jpg)
     const posterSources = [
+      "./poster.png",
+      "./poster.jpg",
       "https://i.ibb.co/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png",
-      "https://i.ibb.co.com/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png",
-      "https://i.ibb.co/xqrw7gC2/2caca46c-4f08-4fcf-8ebf-fa6ad9cebdd0.png",
-      "https://i.ibb.co.com/xqrw7gC2/2caca46c-4f08-4fcf-8ebf-fa6ad9cebdd0.png"
+      "https://i.ibb.co/xqrw7gC2/2caca46c-4f08-4fcf-8ebf-fa6ad9cebdd0.png"
     ];
     let posterIdx = 0;
     const posterImgEl = document.getElementById("posterBackgroundImg");
@@ -257,8 +257,8 @@
       }
     });
 
-    // TEMPEL URL WEB APP GOOGLE APPS SCRIPT (/exec) ANDA DI BAWAH INI:
-    const APPS_SCRIPT_URL = "TEMPEL_URL_WEB_APP_APPS_SCRIPT_ANDA_DI_SINI";
+    // URL Web App Google Apps Script
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqmrJR290B2902IM2AuaCbmDwup2eI_xDCNgVcIQonHu7CjCYeF5K2YO5MoxiFhQ7k/exec";
 
     const LOCAL_CACHE_KEY = "erapor_smpn2_sheet_cache_v4";
 
