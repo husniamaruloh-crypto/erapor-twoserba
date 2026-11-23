@@ -65,20 +65,13 @@
       box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.45), 0 10px 25px rgba(56, 189, 248, 0.35);
       transform: scale(1.015);
     }
-    /* Area Interaktif Gambar Buku */
-    .hotspot-books {
-      left: 34.5%;
-      top: 39.5%;
-      width: 31%;
-      height: 29.5%;
-    }
-    /* Area Interaktif Tombol KLIK DISINI */
-    .hotspot-klik {
-      left: 38.5%;
-      top: 71.5%;
-      width: 23%;
-      height: 9.5%;
-      border-radius: 9999px;
+    /* Satu Area Interaktif Tunggal: Tombol "KLIK DI SINI", Buku Terbuka, & Ikon Mouse */
+    .hotspot-main {
+      left: 29.8%;
+      top: 18.2%;
+      width: 26.5%;
+      height: 36.5%;
+      border-radius: 32px;
     }
   </style>
 </head>
@@ -118,10 +111,8 @@
         alt="Portal e-Rapor SMPN 2 Serang Baru"
         class="poster-img"
       />
-      <!-- Hotspot 1: Gambar Buku -->
-      <div id="areaBooks" class="hotspot hotspot-books" role="button" tabindex="0" aria-label="Buka e-Rapor lewat Gambar Buku" title="Klik untuk membuka e-Rapor"></div>
-      <!-- Hotspot 2: Tombol KLIK DISINI -->
-      <div id="areaKlikDisini" class="hotspot hotspot-klik" role="button" tabindex="0" aria-label="Klik Disini untuk Buka e-Rapor" title="Klik Disini untuk membuka e-Rapor"></div>
+      <!-- Hotspot Tunggal: Mencakup Tombol KLIK DI SINI, Buku Terbuka, & Mouse -->
+      <div id="areaMainPoster" class="hotspot hotspot-main" role="button" tabindex="0" aria-label="Klik Disini untuk Membuka e-Rapor" title="Klik untuk membuka e-Rapor"></div>
     </div>
   </main>
 
@@ -307,8 +298,7 @@
     const refreshIcon = document.getElementById("refreshIcon");
     const btnRefreshCheck = document.getElementById("btnRefreshCheck");
 
-    const areaBooks = document.getElementById("areaBooks");
-    const areaKlikDisini = document.getElementById("areaKlikDisini");
+    const areaMainPoster = document.getElementById("areaMainPoster");
 
     const pinModal = document.getElementById("pinModal");
     const pinForm = document.getElementById("pinForm");
@@ -538,17 +528,14 @@
       window.open(currentData.url, "_blank", "noopener,noreferrer");
     }
 
-    areaBooks.addEventListener("click", openEraporLink);
-    areaKlikDisini.addEventListener("click", openEraporLink);
+    areaMainPoster.addEventListener("click", openEraporLink);
 
-    // Dukungan aksesibilitas keyboard (Enter/Space) untuk hotspot
-    [areaBooks, areaKlikDisini].forEach((el) => {
-      el.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          openEraporLink();
-        }
-      });
+    // Dukungan aksesibilitas keyboard (Enter/Space) untuk hotspot utama
+    areaMainPoster.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openEraporLink();
+      }
     });
 
     // Modal Login Password / PIN Admin
