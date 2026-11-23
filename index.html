@@ -4,8 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Portal Akses e-Rapor SMPN 2 Serang Baru</title>
+  <!-- Favicon Logo SMP Negeri 2 Serang Baru -->
+  <link id="dynamicFavicon" rel="icon" type="image/png" href="./logo%20smpn-2-serba.png" />
+  <link rel="shortcut icon" type="image/png" href="./logo%20smpn-2-serba.png" />
+  <link rel="apple-touch-icon" href="./logo%20smpn-2-serba.png" />
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body {
@@ -32,8 +39,6 @@
       width: min(100vw, calc(100dvh * (16 / 9)));
       height: min(100dvh, calc(100vw * (9 / 16)));
       box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
-      background: linear-gradient(135deg, #0f296b 0%, #1e40af 50%, #0b1b48 100%);
-      overflow: hidden;
     }
     @media (max-width: 768px) and (orientation: portrait) {
       .poster-stage {
@@ -54,19 +59,20 @@
       cursor: pointer;
       border-radius: 14px;
       transition: all 0.2s ease;
-      z-index: 10;
     }
     .hotspot:hover, .hotspot:active {
       background-color: rgba(255, 255, 255, 0.14);
       box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.45), 0 10px 25px rgba(56, 189, 248, 0.35);
       transform: scale(1.015);
     }
+    /* Area Interaktif Gambar Buku */
     .hotspot-books {
       left: 34.5%;
       top: 39.5%;
       width: 31%;
       height: 29.5%;
     }
+    /* Area Interaktif Tombol KLIK DISINI */
     .hotspot-klik {
       left: 38.5%;
       top: 71.5%;
@@ -78,24 +84,24 @@
 </head>
 <body>
 
-  <!-- Baris Kontrol Atas -->
+  <!-- Baris Kontrol Atas (Top Bar) -->
   <div class="fixed top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-40 flex items-start justify-between gap-2 pointer-events-none">
-    <!-- Status Server & Waktu Pembaruan -->
+    <!-- Badge Status Server & Keterangan Waktu Pembaruan -->
     <div id="statusBadge" class="pointer-events-auto flex items-center gap-2.5 px-3 py-2 sm:px-3.5 sm:py-2 rounded-2xl bg-slate-900/90 backdrop-blur-md border border-white/15 shadow-lg text-white max-w-[66vw] sm:max-w-xs">
       <span class="relative flex h-2.5 w-2.5 shrink-0">
         <span id="statusPing" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
         <span id="statusDot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
       </span>
       <div class="min-w-0 leading-tight">
-        <div id="statusLabel" class="text-[11px] sm:text-xs font-bold tracking-wide truncate">Memeriksa Server...</div>
-        <div id="lastUpdatedBadge" class="text-[10px] sm:text-[11px] text-slate-300 font-medium truncate mt-0.5">Menghubungkan...</div>
+        <div id="statusLabel" class="text-[11px] sm:text-xs font-bold tracking-wide truncate">Mengecek Link Server...</div>
+        <div id="lastUpdatedBadge" class="text-[10px] sm:text-[11px] text-slate-300 font-medium truncate mt-0.5">Memuat waktu...</div>
       </div>
       <button id="btnRefreshCheck" type="button" title="Cek Ulang Koneksi Server" class="ml-0.5 p-1.5 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/25 text-slate-200 transition shrink-0">
         <i id="refreshIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
       </button>
     </div>
 
-    <!-- Tombol Panel Admin -->
+    <!-- Tombol Panel Admin di Pojok Kanan Atas -->
     <button id="btnOpenAdmin" type="button" class="pointer-events-auto flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-800 active:bg-slate-700 backdrop-blur-md border border-white/15 shadow-lg text-[11px] sm:text-xs font-bold text-white transition shrink-0">
       <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400"></i>
       <span>Panel Admin</span>
@@ -105,29 +111,16 @@
   <!-- Poster Utama Full-Screen -->
   <main class="poster-wrapper">
     <div class="poster-stage">
-      <!-- Memuat poster.png langsung dari folder GitHub dengan Auto-Fallback -->
+      <!-- Memuat poster.jpg langsung dari repository GitHub & cadangan CDN ImgBB -->
       <img
         id="posterBackgroundImg"
-        src="./poster.png"
+        src="./poster.jpg"
         alt="Portal e-Rapor SMPN 2 Serang Baru"
         class="poster-img"
       />
-
-      <!-- Tampilan Poster Cadangan Bawaan -->
-      <div id="fallbackPosterUI" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-6 text-white">
-        <div class="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-sky-300 font-bold mb-1">SMP Negeri 2 Serang Baru</div>
-        <h1 class="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white drop-shadow">PORTAL AKSES e-RAPOR SMP</h1>
-        <p class="text-xs sm:text-sm text-blue-100 mt-1 mb-5">Aplikasi Pengolahan Nilai Rapor Peserta Didik</p>
-        <div class="w-20 h-20 sm:w-28 sm:h-28 rounded-3xl bg-white/15 border border-white/25 flex items-center justify-center shadow-xl mb-4">
-          <i data-lucide="book-open-check" class="w-10 h-10 sm:w-14 sm:h-14 text-amber-300"></i>
-        </div>
-        <div class="px-6 py-2.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-base tracking-wide shadow-lg">
-          KLIK DISINI
-        </div>
-      </div>
-
-      <!-- Area Klik Interaktif -->
+      <!-- Hotspot 1: Gambar Buku -->
       <div id="areaBooks" class="hotspot hotspot-books" role="button" tabindex="0" aria-label="Buka e-Rapor lewat Gambar Buku" title="Klik untuk membuka e-Rapor"></div>
+      <!-- Hotspot 2: Tombol KLIK DISINI -->
       <div id="areaKlikDisini" class="hotspot hotspot-klik" role="button" tabindex="0" aria-label="Klik Disini untuk Buka e-Rapor" title="Klik Disini untuk membuka e-Rapor"></div>
     </div>
   </main>
@@ -145,7 +138,7 @@
             <p class="text-xs text-slate-500">Masukkan Password / PIN Admin</p>
           </div>
         </div>
-        <button id="closePinModal" type="button" class="text-slate-400 hover:text-slate-600 p-1">
+        <button id="closePinModal" type="button" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
@@ -171,18 +164,19 @@
           <i data-lucide="shield-check" class="w-5 h-5 text-amber-400"></i>
           <h3 class="font-bold text-base">Panel Admin e-Rapor</h3>
         </div>
-        <button id="closeAdminModal" type="button" class="text-slate-400 hover:text-white p-1">
+        <button id="closeAdminModal" type="button" class="text-slate-400 hover:text-white p-1 rounded-lg">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <form id="updateForm" class="p-5 sm:p-6 space-y-4 max-h-[82dvh] overflow-y-auto">
+        <!-- Indikator Status Koneksi Spreadsheet -->
         <div id="sheetSyncAlert" class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
-          <span id="sheetSyncText" class="font-semibold">Menghubungkan ke Google Spreadsheet...</span>
+          <span id="sheetSyncText" class="font-semibold">Memeriksa koneksi Google Spreadsheet...</span>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Link Cloudflare Tunnel Terbaru</label>
+          <label for="inputCloudflareUrl" class="block text-xs font-bold text-slate-700 mb-1.5">Link Cloudflare Tunnel Terbaru</label>
           <div class="relative flex items-center">
             <input type="url" id="inputCloudflareUrl" placeholder="https://contoh-link.trycloudflare.com" required
               class="w-full pl-3.5 pr-11 py-2.5 rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none text-sm font-medium text-slate-800" />
@@ -193,7 +187,7 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Mode Status Server e-Rapor</label>
+          <label for="inputStatus" class="block text-xs font-bold text-slate-700 mb-1.5">Mode Status Server e-Rapor</label>
           <select id="inputStatus" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none text-sm font-medium text-slate-800 bg-white">
             <option value="auto">🤖 Deteksi Otomatis (Cek Langsung Link Cloudflare)</option>
             <option value="online">🟢 Paksa Online (Selalu Aktif)</option>
@@ -203,16 +197,34 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Pesan Notifikasi (Jika Server Tidak Aktif)</label>
+          <label for="inputAnnouncement" class="block text-xs font-bold text-slate-700 mb-1.5">Pesan Notifikasi (Jika Server Tidak Aktif)</label>
           <textarea id="inputAnnouncement" rows="2" placeholder="Contoh: Server e-Rapor sedang tidak aktif. Silakan hubungi admin."
             class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none text-sm text-slate-800"></textarea>
         </div>
 
         <div class="pt-2 border-t border-slate-100">
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Ubah Password / PIN Admin (Bebas Huruf, Angka, Simbol)</label>
+          <label for="inputNewPin" class="block text-xs font-bold text-slate-700 mb-1.5">Ubah Password / PIN Admin (Bebas Huruf, Angka, Simbol)</label>
           <input type="text" id="inputNewPin" placeholder="Kosongkan jika tidak ingin mengubah"
             class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:border-blue-600 outline-none text-sm text-slate-800" />
         </div>
+
+        <!-- Pengaturan Opsional URL Apps Script Web App (/exec) -->
+        <details class="pt-2 border-t border-slate-100 group">
+          <summary class="text-xs font-bold text-slate-700 cursor-pointer select-none flex items-center justify-between py-1 hover:text-blue-600">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="sheet" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span>URL Web App Google Apps Script (/exec) (Opsional)</span>
+            </span>
+            <span id="scriptModeBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-semibold">Lokal</span>
+          </summary>
+          <div class="mt-2 space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200/80">
+            <p class="text-[11px] text-slate-600 leading-relaxed">
+              Tempel URL deployment <code>/exec</code> Google Apps Script agar data link &amp; password sinkron ke Spreadsheet (menimpa baris ke-2) dan semua perangkat:
+            </p>
+            <input type="url" id="inputAppsScriptUrl" placeholder="https://script.google.com/macros/s/.../exec"
+              class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600" />
+          </div>
+        </details>
 
         <div class="flex items-center gap-3 pt-2">
           <button type="button" id="btnCancelAdmin" class="w-1/3 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition">
@@ -236,31 +248,45 @@
   <script>
     lucide.createIcons();
 
-    // Urutan sumber gambar poster (prioritas file lokal di GitHub: poster.png / poster.jpg)
+    // Urutan sumber gambar poster (prioritas file lokal poster.jpg di GitHub, lalu cadangan ImgBB)
     const posterSources = [
-      "./poster.png",
       "./poster.jpg",
+      "./poster.png",
       "https://i.ibb.co/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png",
-      "https://i.ibb.co/xqrw7gC2/2caca46c-4f08-4fcf-8ebf-fa6ad9cebdd0.png"
+      "https://i.ibb.co.com/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png",
+      "https://placehold.co/1280x720/0f172a/ffffff?text=Portal+e-Rapor+SMPN+2+Serang+Baru"
     ];
     let posterIdx = 0;
     const posterImgEl = document.getElementById("posterBackgroundImg");
-    const fallbackPosterUI = document.getElementById("fallbackPosterUI");
 
     posterImgEl.addEventListener("error", () => {
       posterIdx++;
       if (posterIdx < posterSources.length) {
         posterImgEl.src = posterSources[posterIdx];
-      } else {
-        posterImgEl.classList.add("hidden");
-        fallbackPosterUI.classList.remove("hidden");
       }
     });
 
-    // URL Web App Google Apps Script
+    // Memastikan favicon menggunakan file logo smpn-2-serba.png dari repository GitHub
+    const logoCandidates = ["./logo%20smpn-2-serba.png", "./logo smpn-2-serba.png", "./logo.png"];
+    (function probeSchoolLogo(idx) {
+      if (idx >= logoCandidates.length) return;
+      const img = new Image();
+      img.onload = () => {
+        const fav = document.getElementById("dynamicFavicon");
+        if (fav) {
+          fav.type = "image/png";
+          fav.href = logoCandidates[idx];
+        }
+      };
+      img.onerror = () => probeSchoolLogo(idx + 1);
+      img.src = logoCandidates[idx];
+    })(0);
+
+    // Konstanta URL Web App Google Apps Script (/exec)
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqmrJR290B2902IM2AuaCbmDwup2eI_xDCNgVcIQonHu7CjCYeF5K2YO5MoxiFhQ7k/exec";
 
-    const LOCAL_CACHE_KEY = "erapor_smpn2_sheet_cache_v4";
+    const LOCAL_CACHE_KEY = "erapor_smpn2_sheet_cache_v5";
+    const LOCAL_SCRIPT_URL_KEY = "erapor_smpn2_apps_script_url_v1";
 
     const defaultState = {
       url: "https://sharp-consideration-duration-hundred.trycloudflare.com",
@@ -295,10 +321,24 @@
     const inputStatus = document.getElementById("inputStatus");
     const inputAnnouncement = document.getElementById("inputAnnouncement");
     const inputNewPin = document.getElementById("inputNewPin");
+    const inputAppsScriptUrl = document.getElementById("inputAppsScriptUrl");
+    const scriptModeBadge = document.getElementById("scriptModeBadge");
     const btnSaveSubmit = document.getElementById("btnSaveSubmit");
     const btnSaveText = document.getElementById("btnSaveText");
     const sheetSyncAlert = document.getElementById("sheetSyncAlert");
     const sheetSyncText = document.getElementById("sheetSyncText");
+
+    function getActiveScriptUrl() {
+      if (APPS_SCRIPT_URL && APPS_SCRIPT_URL.trim() !== "" && !APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
+        return APPS_SCRIPT_URL.trim();
+      }
+      try {
+        const saved = localStorage.getItem(LOCAL_SCRIPT_URL_KEY);
+        return saved ? saved.trim() : "";
+      } catch (e) {
+        return "";
+      }
+    }
 
     function loadLocalCache() {
       try {
@@ -366,9 +406,11 @@
         inputCloudflareUrl.value = currentData.url || "";
         inputStatus.value = currentData.status || "auto";
         inputAnnouncement.value = currentData.announcement || "";
+        inputAppsScriptUrl.value = getActiveScriptUrl();
       }
     }
 
+    // Mengecek langsung dari browser menggunakan favicon.ico dengan timeout 7 detik & cache-busting
     function checkLinkDirectlyFromBrowser(targetUrl) {
       return new Promise((resolve) => {
         if (!targetUrl) {
@@ -412,9 +454,13 @@
       refreshIcon.classList.add("animate-spin");
       renderUI();
 
-      if (APPS_SCRIPT_URL && !APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
+      const scriptUrl = getActiveScriptUrl();
+
+      if (scriptUrl) {
+        scriptModeBadge.textContent = "Spreadsheet";
+        scriptModeBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold";
         try {
-          const res = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now(), {
+          const res = await fetch(scriptUrl + "?t=" + Date.now(), {
             method: "GET",
             cache: "no-store"
           });
@@ -428,11 +474,13 @@
         } catch (err) {
           console.error("Gagal membaca Spreadsheet:", err);
           sheetSyncAlert.className = "p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800";
-          sheetSyncText.textContent = "Gagal membaca Spreadsheet. Periksa izin Web App (Anyone).";
+          sheetSyncText.textContent = "Gagal membaca Spreadsheet. Periksa URL /exec atau izin Anyone.";
         }
       } else {
+        scriptModeBadge.textContent = "Mode Lokal";
+        scriptModeBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold";
         sheetSyncAlert.className = "p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800";
-        sheetSyncText.textContent = "URL Apps Script belum dipasang di kode HTML.";
+        sheetSyncText.textContent = "Mode Penyimpanan Lokal • Isi URL Apps Script (/exec) di bawah untuk sinkron Spreadsheet.";
       }
 
       browserDetectedOnline = await checkLinkDirectlyFromBrowser(currentData.url);
@@ -493,6 +541,17 @@
     areaBooks.addEventListener("click", openEraporLink);
     areaKlikDisini.addEventListener("click", openEraporLink);
 
+    // Dukungan aksesibilitas keyboard (Enter/Space) untuk hotspot
+    [areaBooks, areaKlikDisini].forEach((el) => {
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openEraporLink();
+        }
+      });
+    });
+
+    // Modal Login Password / PIN Admin
     document.getElementById("btnOpenAdmin").addEventListener("click", async () => {
       pinInput.value = "";
       pinError.classList.add("hidden");
@@ -507,6 +566,13 @@
       pinModal.classList.remove("flex");
     });
 
+    pinModal.addEventListener("click", (e) => {
+      if (e.target === pinModal) {
+        pinModal.classList.add("hidden");
+        pinModal.classList.remove("flex");
+      }
+    });
+
     pinForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const activePin = String(currentData.adminPin || "123456").trim();
@@ -518,6 +584,7 @@
         inputStatus.value = currentData.status || "auto";
         inputAnnouncement.value = currentData.announcement || "";
         inputNewPin.value = "";
+        inputAppsScriptUrl.value = getActiveScriptUrl();
 
         adminModal.classList.remove("hidden");
         adminModal.classList.add("flex");
@@ -534,15 +601,24 @@
     }
     document.getElementById("closeAdminModal").addEventListener("click", hideAdminModal);
     document.getElementById("btnCancelAdmin").addEventListener("click", hideAdminModal);
+    adminModal.addEventListener("click", (e) => {
+      if (e.target === adminModal) hideAdminModal();
+    });
 
     document.getElementById("btnPasteUrl").addEventListener("click", async () => {
       try {
-        const text = await navigator.clipboard.readText();
-        if (text) {
-          inputCloudflareUrl.value = text.trim();
-          showToast("Link ditempel dari clipboard!");
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            inputCloudflareUrl.value = text.trim();
+            showToast("Link ditempel dari clipboard!");
+            return;
+          }
         }
+        inputCloudflareUrl.focus();
+        showToast("Silakan tempel manual (Ctrl+V / Tekan Tahan).", "error");
       } catch (err) {
+        inputCloudflareUrl.focus();
         showToast("Silakan tempel manual (Ctrl+V / Tekan Tahan).", "error");
       }
     });
@@ -550,39 +626,51 @@
     updateForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       let cleanUrl = inputCloudflareUrl.value.trim();
-      if (cleanUrl && !cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://")) {
+      if (cleanUrl && !/^https?:\/\//i.test(cleanUrl)) {
         cleanUrl = "https://" + cleanUrl;
       }
 
+      const customScriptInput = inputAppsScriptUrl.value.trim();
+      try {
+        if (customScriptInput) {
+          localStorage.setItem(LOCAL_SCRIPT_URL_KEY, customScriptInput);
+        } else {
+          localStorage.removeItem(LOCAL_SCRIPT_URL_KEY);
+        }
+      } catch (err) {}
+
+      const activeScript = getActiveScriptUrl();
       const newPinVal = inputNewPin.value.trim();
+
       const payload = {
         url: cleanUrl,
         status: inputStatus.value,
         announcement: inputAnnouncement.value.trim() || defaultState.announcement,
-        adminPin: newPinVal !== "" ? newPinVal : currentData.adminPin
+        adminPin: newPinVal !== "" ? newPinVal : currentData.adminPin,
+        updatedAt: new Date().toISOString()
       };
 
       btnSaveSubmit.disabled = true;
-      btnSaveText.textContent = "Menyimpan & Mengecek Link...";
+      btnSaveText.textContent = activeScript ? "Menyimpan ke Sheet..." : "Menyimpan...";
 
       try {
-        if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
-          throw new Error("URL Apps Script belum diatur di index.html");
-        }
+        if (activeScript) {
+          const response = await fetch(activeScript, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(payload)
+          });
 
-        const response = await fetch(APPS_SCRIPT_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-        if (result && result.ok && result.data) {
-          currentData = { ...defaultState, ...result.data };
+          const result = await response.json();
+          if (result && result.ok && result.data) {
+            currentData = { ...defaultState, ...result.data };
+          } else {
+            throw new Error((result && result.error) || "Gagal memperbarui baris Spreadsheet");
+          }
         } else {
-          throw new Error((result && result.error) || "Gagal memperbarui baris Spreadsheet");
+          currentData = { ...defaultState, ...payload };
         }
 
         saveLocalCache(currentData);
@@ -590,10 +678,11 @@
         renderUI();
         hideAdminModal();
 
+        const syncNote = activeScript ? "Tersimpan di Spreadsheet" : "Tersimpan di browser ini";
         if (getEffectiveStatus() === "online") {
-          showToast("Tersimpan! Link terdeteksi AKTIF.", "success");
+          showToast(syncNote + "! Link terdeteksi AKTIF.", "success");
         } else {
-          showToast("Tersimpan, namun link error / belum aktif (Server Tidak Aktif).", "error");
+          showToast(syncNote + ", namun link belum aktif (Server Tidak Aktif).", "error");
         }
       } catch (err) {
         console.error("Save error:", err);
@@ -604,12 +693,14 @@
       }
     });
 
+    // Auto-refresh pengecekan setiap 30 detik
     setInterval(() => {
       if (!isChecking && adminModal.classList.contains("hidden")) {
         syncAndCheck(false);
       }
     }, 30000);
 
+    // Jalankan pertama kali saat halaman dibuka
     renderUI();
     syncAndCheck(false);
   </script>
