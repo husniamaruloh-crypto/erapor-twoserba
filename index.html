@@ -32,6 +32,8 @@
       width: min(100vw, calc(100dvh * (16 / 9)));
       height: min(100dvh, calc(100vw * (9 / 16)));
       box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
+      background: linear-gradient(135deg, #0f296b 0%, #1e40af 50%, #0b1b48 100%);
+      overflow: hidden;
     }
     @media (max-width: 768px) and (orientation: portrait) {
       .poster-stage {
@@ -52,6 +54,7 @@
       cursor: pointer;
       border-radius: 14px;
       transition: all 0.2s ease;
+      z-index: 10;
     }
     .hotspot:hover, .hotspot:active {
       background-color: rgba(255, 255, 255, 0.14);
@@ -102,11 +105,28 @@
   <!-- Poster Utama Full-Screen -->
   <main class="poster-wrapper">
     <div class="poster-stage">
+      <!-- Gambar Poster dengan Auto-Fallback Multi-Server -->
       <img
-        src="https://i.ibb.co.com/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png"
+        id="posterBackgroundImg"
+        src="https://i.ibb.co/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png"
         alt="Portal e-Rapor SMPN 2 Serang Baru"
         class="poster-img"
       />
+
+      <!-- Tampilan Poster Cadangan Bawaan (Hanya muncul jika semua URL gambar luar diblokir jaringan) -->
+      <div id="fallbackPosterUI" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-6 text-white">
+        <div class="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-sky-300 font-bold mb-1">SMP Negeri 2 Serang Baru</div>
+        <h1 class="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white drop-shadow">PORTAL AKSES e-RAPOR SMP</h1>
+        <p class="text-xs sm:text-sm text-blue-100 mt-1 mb-5">Aplikasi Pengolahan Nilai Rapor Peserta Didik</p>
+        <div class="w-20 h-20 sm:w-28 sm:h-28 rounded-3xl bg-white/15 border border-white/25 flex items-center justify-center shadow-xl mb-4">
+          <i data-lucide="book-open-check" class="w-10 h-10 sm:w-14 sm:h-14 text-amber-300"></i>
+        </div>
+        <div class="px-6 py-2.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-base tracking-wide shadow-lg">
+          KLIK DISINI
+        </div>
+      </div>
+
+      <!-- Area Klik Interaktif -->
       <div id="areaBooks" class="hotspot hotspot-books" role="button" tabindex="0" aria-label="Buka e-Rapor lewat Gambar Buku" title="Klik untuk membuka e-Rapor"></div>
       <div id="areaKlikDisini" class="hotspot hotspot-klik" role="button" tabindex="0" aria-label="Klik Disini untuk Buka e-Rapor" title="Klik Disini untuk membuka e-Rapor"></div>
     </div>
@@ -216,8 +236,29 @@
   <script>
     lucide.createIcons();
 
+    // Auto-Fallback Gambar Background Poster jika salah satu link CDN diblokir
+    const posterSources = [
+      "https://i.ibb.co/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png",
+      "https://i.ibb.co.com/n9nknXf/f6c28945-e7ab-4976-bad1-5dd1158413c1.png",
+      "https://i.ibb.co/xqrw7gC2/2caca46c-4f08-4fcf-8ebf-fa6ad9cebdd0.png",
+      "https://i.ibb.co.com/xqrw7gC2/2caca46c-4f08-4fcf-8ebf-fa6ad9cebdd0.png"
+    ];
+    let posterIdx = 0;
+    const posterImgEl = document.getElementById("posterBackgroundImg");
+    const fallbackPosterUI = document.getElementById("fallbackPosterUI");
+
+    posterImgEl.addEventListener("error", () => {
+      posterIdx++;
+      if (posterIdx < posterSources.length) {
+        posterImgEl.src = posterSources[posterIdx];
+      } else {
+        posterImgEl.classList.add("hidden");
+        fallbackPosterUI.classList.remove("hidden");
+      }
+    });
+
     // TEMPEL URL WEB APP GOOGLE APPS SCRIPT (/exec) ANDA DI BAWAH INI:
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqmrJR290B2902IM2AuaCbmDwup2eI_xDCNgVcIQonHu7CjCYeF5K2YO5MoxiFhQ7k/exec";
+    const APPS_SCRIPT_URL = "TEMPEL_URL_WEB_APP_APPS_SCRIPT_ANDA_DI_SINI";
 
     const LOCAL_CACHE_KEY = "erapor_smpn2_sheet_cache_v4";
 
@@ -328,7 +369,6 @@
       }
     }
 
-    // Mengecek langsung dari browser menggunakan favicon.ico (gagal/onerror jika Cloudflare error 530/1033)
     function checkLinkDirectlyFromBrowser(targetUrl) {
       return new Promise((resolve) => {
         if (!targetUrl) {
@@ -453,7 +493,6 @@
     areaBooks.addEventListener("click", openEraporLink);
     areaKlikDisini.addEventListener("click", openEraporLink);
 
-    // Modal Password / PIN & Admin
     document.getElementById("btnOpenAdmin").addEventListener("click", async () => {
       pinInput.value = "";
       pinError.classList.add("hidden");
